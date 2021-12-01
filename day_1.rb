@@ -1,7 +1,5 @@
 #!/usr/bin/env ruby
 
-require "colorize"
-
 DEBUG = false
 
 # a list of depths as read by sonar as we descend to the sea floor
@@ -11,10 +9,11 @@ ary = input.split("\n").map do |string|
     string.to_i
 end
 
-# part 1
+# part 1: count increments from previous readout
 
 incs = 0
 last_measurement = -1
+
 ary.each do |measurement|
     if last_measurement == -1
         puts " ---- First Line!" if DEBUG
@@ -29,7 +28,7 @@ end
 
 puts "Part 1 answer: #{incs}"
 
-# part 2
+# part 2: count increments of moving 3-measurement window
 
 incs = 0
 last_measurement = -1
