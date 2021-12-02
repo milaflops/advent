@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-DEBUG = false
+DEBUG = true
 
 # a list of depths as read by sonar as we descend to the sea floor
 input = File.read("./inputs/day_1.txt")
