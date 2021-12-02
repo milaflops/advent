@@ -34,7 +34,6 @@ puts "answer: #{answer}"
 
 # part 2
 
-
 depth = 0
 horiz = 0
 aim = 0
@@ -50,10 +49,8 @@ lines.each do |line|
         horiz += scalar
         depth += (aim * scalar)
     elsif command == "down"
-        # depth += scalar
         aim += scalar
     elsif command == "up"
-        # depth -= scalar
         aim -= scalar
     else
         raise "AAAA UNRECOGNIZED COMMAND #{command}"
@@ -63,4 +60,4 @@ end
 puts "horiz: #{horiz} depth: #{depth}"
 
 answer = horiz * depth
-puts "answer: #{answer}"
+puts "Part 2 answer: #{answer}"
