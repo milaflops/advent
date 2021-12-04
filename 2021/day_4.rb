@@ -97,8 +97,9 @@ numbers_to_draw.each do |number_drawn|
       puts "number just drawn: #{number_drawn}"
       product = sum * number_drawn
       puts "product: #{product}"
+      exit
     end
-  end
+  else
     # merely test if our last board has won
     # remove this number on every board
     boards.map! do |board|
@@ -129,22 +130,8 @@ numbers_to_draw.each do |number_drawn|
         puts "product: #{product}"
         found_first_winning = true
       end
-      # break
     end
     # let's keep goin!!!!
-    # boards_that_win = 0
-    # boards_total = boards.length
-    # boards.each do |board|
-    #   if bingo?(board)
-    #     boards_that_win += 1
-    #   end
-    # end
-    # if boards_that_win + 1 == boards_total
-    #   puts "one losing board left! let's calculate its score"
-    #   losing_board = boards.select do |board|
-    #     !bingo?(board)
-    #   end
-    # end
     losing_boards = boards.select do |board|
       !bingo?(board)
     end
@@ -152,6 +139,7 @@ numbers_to_draw.each do |number_drawn|
       puts " ==== we found the last loser!"
       puts " ---- setting tripwire until it wins"
       tripwire = true
+      last_losing_board = losing_boards.first
       # print_board(losing_boards.first)
       # sum = 0
       # losing_boards.first.each do |row|
