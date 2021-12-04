@@ -32,12 +32,12 @@ end
 
 def find_winning_board(boards)
   boards.each do |board|
-    return board if board_wins?(board)
+    return board if bingo?(board)
   end
   nil
 end
 
-def board_wins?(board)
+def bingo?(board)
   # test each row for straight nils
   board.each do |row|
     non_nils = 0
@@ -60,12 +60,24 @@ def board_wins?(board)
   return false
 end
 
+def print_board(board)
+  board.each do |row|
+    row.each do |cell|
+      print "%2i " % (cell || 0)
+    end
+    puts
+  end
+end
+
 # solv the bingo by MUTATING THE CELLS TO NEGATIVE, to mark them
 
+found_first_winning = false
+tripwire = false
+last_losing_board = []
+
 numbers_to_draw.each do |number_drawn|
-  # remove this number on every board
-  boards.map! do |board|
-    board.map do |row|
+  if tripwire
+    last_losing_board.map! do |row|
       row.map do |cell|
         if cell == number_drawn
           nil
@@ -74,34 +86,84 @@ numbers_to_draw.each do |number_drawn|
         end
       end
     end
-  end
-  if winning_board = find_winning_board(boards)
-    puts "found one"
-    winning_board.each do |row|
-      row.each do |cell|
-        print "%2i " % (cell || 0)
+    if bingo?(last_losing_board)
+      sum = 0
+      last_losing_board.each do |row|
+        row.each do |cell|
+          sum += (cell || 0)
+        end
       end
-      puts
+      puts "sum: #{sum}"
+      puts "number just drawn: #{number_drawn}"
+      product = sum * number_drawn
+      puts "product: #{product}"
     end
-    sum = 0
-    winning_board.each do |row|
-      row.each do |cell|
-        sum += (cell || 0)
+  end
+    # merely test if our last board has won
+    # remove this number on every board
+    boards.map! do |board|
+      board.map do |row|
+        row.map do |cell|
+          if cell == number_drawn
+            nil
+          else
+            cell
+          end
+        end
       end
     end
-    puts "sum: #{sum}"
-    puts "number just drawn: #{number_drawn}"
-    product = sum * number_drawn
-    puts "product: #{product}"
-    break
+    # first winning board is marked and such
+    if winning_board = find_winning_board(boards)
+      unless found_first_winning
+        puts " ==== found the first winner!"
+        print_board(winning_board)
+        sum = 0
+        winning_board.each do |row|
+          row.each do |cell|
+            sum += (cell || 0)
+          end
+        end
+        puts "sum: #{sum}"
+        puts "number just drawn: #{number_drawn}"
+        product = sum * number_drawn
+        puts "product: #{product}"
+        found_first_winning = true
+      end
+      # break
+    end
+    # let's keep goin!!!!
+    # boards_that_win = 0
+    # boards_total = boards.length
+    # boards.each do |board|
+    #   if bingo?(board)
+    #     boards_that_win += 1
+    #   end
+    # end
+    # if boards_that_win + 1 == boards_total
+    #   puts "one losing board left! let's calculate its score"
+    #   losing_board = boards.select do |board|
+    #     !bingo?(board)
+    #   end
+    # end
+    losing_boards = boards.select do |board|
+      !bingo?(board)
+    end
+    if losing_boards.length == 1
+      puts " ==== we found the last loser!"
+      puts " ---- setting tripwire until it wins"
+      tripwire = true
+      # print_board(losing_boards.first)
+      # sum = 0
+      # losing_boards.first.each do |row|
+      #   row.each do |cell|
+      #     sum += (cell || 0)
+      #   end
+      # end
+      # puts "sum: #{sum}"
+      # puts "number just drawn: #{number_drawn}"
+      # product = sum * number_drawn
+      # puts "product: #{product}"
+      # exit
+    end
   end
-  # # test each board to see if it wins
-  # boards.each do |board|
-  #   # begin with assumption that board wins until proven otherwise
-  #   wins = true
-  #   # test each row for positive numbers
-  #   board.each do |row|
-  #     row.each do |cell|
-  #     end
-  # end
 end
