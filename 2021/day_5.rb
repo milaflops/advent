@@ -1,12 +1,10 @@
 #!/usr/bin/env ruby
 
-require 'byebug'
-
 input = File.read("./inputs/day_5.txt")
 lines = input.split("\n")
 
 Point = Struct.new :x, :y
-# Segment = Struct.new :start, :finish
+
 class Segment
     attr_reader :start, :finish
 
@@ -116,7 +114,6 @@ segments = lines.map do |line|
     points = line.split " -> "
     point1 = points[0].split ","
     point2 = points[1].split ","
-    # puts points.inspect
     point1 = Point.new point1[0].to_i, point1[1].to_i
     point2 = Point.new point2[0].to_i, point2[1].to_i
     max_x = [max_x,point1.x,point2.x].max
@@ -160,7 +157,7 @@ diagonal_segments = segments.reject do |segment|
     segment.straight?
 end
 
-# record footprint of straight segments
+# record footprint of diagonal segments
 diagonal_segments.each do |seg|
     seg.footprint.each do |point|
         map[point.y][point.x] ||= 0
