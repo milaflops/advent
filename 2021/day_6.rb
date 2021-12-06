@@ -8,56 +8,8 @@ fish = input.split(",").map do |age|
     age.to_i
 end
 
-# puts fish.inspect
-
-def generate_after_one_day(fish)
-    old_fish = []
-    new_fish = []
-    fish.each do |fish|
-        if fish == 0
-            old_fish.push(6)
-            new_fish.push(8)
-        else
-            old_fish.push(fish-1)
-        end
-    end
-    old_fish + new_fish
-end
-
-def generate_after_n_days(n, fish)
-    new_fish = fish
-    n.times do
-        new_fish = generate_after_one_day(new_fish)
-    end
-    new_fish
-end
-
-after_80_days = generate_after_n_days(80, fish)
-# puts after_80_days.inspect
-
-puts "Answer to part 1: #{after_80_days.count}"
-
-# after_256_days = generate_after_n_days(256, fish)
-# # puts after_256_days.inspect
-
-# puts "Answer to part 2: #{after_256_days.count}"
-
-# That might be way too slow!
-
-# iterating_fish = fish
-# last_count = fish.count
-
-# (1..80).each do |n|
-#     iterating_fish = generate_after_one_day(iterating_fish)
-#     number_more = iterating_fish.count - last_count
-#     puts " ---- after #{n} days: #{iterating_fish.count} (+#{number_more})"
-#     last_count = iterating_fish.count
-# end
-
-# could not find a pattern.
-# we need a new fucking data structure, lmao.
-
-# gonna look like this:
+# part 1 is easy, part 2 gets too slow if you keep track of each fish.
+# so instead of an array of individual fish, we've binned them into a hash like this:
 
 # example_table = {
 #     0: 1,
@@ -68,7 +20,7 @@ puts "Answer to part 1: #{after_80_days.count}"
 
 def gen_fish_table
     table = {}
-    # populating it this way so it's ordered when I print
+    # populating it this way so it's ordered when printed
     (0..8).each do |age|
         table[age] = 0
     end
