@@ -1,4 +1,4 @@
-# Mikayla's Advent of Code Dolutions
+# Mikayla's Advent of Code Solutions
 
 ```
 ,--.  ,--.  ,---.  ,------.,--.   ,--.    ,--.   ,--.,--.   ,--.  ,---.   ,---.   
@@ -26,4 +26,4 @@ I worked retail for many holidays in a row, which kinda ruined Winter Holidays f
 
 in short: I want to love Christmas again
 
-Also, be kind to workers during the holidays. Their feet hurt.
+Also, be kind to workers during the holidays. Their feet are hurting.
