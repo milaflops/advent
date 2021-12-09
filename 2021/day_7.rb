@@ -31,7 +31,6 @@ lowest = 0
   crabs.each do |crab_position|
     fuel += (crab_position - position).abs
   end
-  # puts "at position #{position} fuel consumption is #{fuel}"
   if lowest == 0 || fuel < lowest
     lowest_pos = position
     lowest = fuel
@@ -40,10 +39,12 @@ end
 
 puts "at position #{lowest_pos}, fuel consumption will bottom out at #{lowest}"
 
-# NEW FUEL CONSUMPTION INFORMATION 
+# NEW FUEL CONSUMPTION ALGORITHM 
 lowest_pos = 0
 lowest = 0
 
+# memoize the fuel consumption steppage
+# this felt quicker than working out the equation, idk it probably involves triangles
 $lookup = {}
 def move_from(crab_position,position)
   delta = (crab_position - position).abs
@@ -55,13 +56,12 @@ def move_from(crab_position,position)
   $lookup[delta] = fuel
 end
 
+# now test a nice handful of deltas
 (1..2000).each do |position|
   fuel = 0
   crabs.each do |crab_position|
-    marginal_fuel = (crab_position - position).abs
     fuel += move_from(crab_position,position)
   end
-  # puts "at position #{position} fuel consumption is #{fuel}"
   if lowest == 0 || fuel < lowest
     lowest_pos = position
     lowest = fuel

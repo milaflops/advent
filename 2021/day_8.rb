@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 
-require 'byebug'
 require 'set'
 
 input = File.read("./inputs/day_8.txt")

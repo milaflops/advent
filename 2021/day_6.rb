@@ -18,6 +18,8 @@ end
 #     8: 9
 # }
 
+# as is nature, all fish reproduce in lock-step with their cohort, and nobody ever dies
+
 def gen_fish_table
     table = {}
     # populating it this way so it's ordered when printed
@@ -71,8 +73,6 @@ end
 
 after_80_times = iterate_table_n_times(80,fish_table)
 puts "answer to part 1 (new method): #{count_table(after_80_times)}"
-
-# puts iterate_table_once(fish_table).inspect
 
 after_256_times = iterate_table_n_times(256,fish_table)
 puts "answer to part 2 (new method): #{count_table(after_256_times)}"

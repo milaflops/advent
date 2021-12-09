@@ -69,32 +69,13 @@ end
 
 # puts monte_carlo_sample(0,0.6666)
 
-[
-    # 10,
-    # 100,
-    # 1_000,
-    # 10_000,
-    # 100_000,
-    # 1_000_000,
-    # 10_000_000,
-].each do |samples|
-    # position = rand(0..11)
-    position = 0
-    puts " ----"
-    puts "Position: #{position}"
-    puts "(with #{samples} samples)"
-    exact_value = averaged_column(position)
-    puts "exact value: #{exact_value}"
-    sampled_value = many_samples(position, samples)
-    puts "sampled value: #{sampled_value}"
-end
-
 final_bit_ary = []
 samples = 1_000
 
 puts "actual gamma rate, for reference:"
 puts "000010111110"
 
+# it's a christmas tree!
 [
     10,
     100,

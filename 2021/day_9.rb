@@ -39,8 +39,6 @@ def find_local_minima(map)
         search_indices.push :right
         search_indices.push :left
       end
-      # puts search_indices
-      # puts col
       # start with assumption that we're at the lowest point,
       # and attempt to prove that's false with each check
       lowest = true
@@ -75,15 +73,13 @@ risk_scores = find_local_minima(map).map do |score|
   score + 1
 end
 
-puts risk_scores.inspect
-
 combined_risk_score = risk_scores.inject(:+)
 
 puts "Answer to part 1: #{combined_risk_score}"
 
+# turn all 9s into :M and everything else into :B
+# (mountain and basin, idk)
 def posturize(map)
-  # turn all 9s into :M and everything else into :B
-  # (mountain and basin, idk)
   map.map do |row|
     row.map do |col|
       if col == 9
@@ -105,6 +101,7 @@ def finished_marking?(map)
   true
 end
 
+# zero out the mountains so int comparisons dont fail
 def zero_mountains(map)
   map.map do |row|
     row.map do |col|
@@ -131,9 +128,9 @@ def mark_basins(map,marker=1)
     break unless queue.empty?
   end
   
+  # begin spidering out from each thing left in the queue until there is none
   while !queue.empty?
     row_idx, col_idx = queue.shift
-    # puts "now searching #{row_idx}, #{col_idx}"
     # mark the initial one
     new_map[row_idx][col_idx] = marker
     search_indices = []
@@ -156,6 +153,7 @@ def mark_basins(map,marker=1)
       # we're all the way on the right
       search_indices.push :left
     else
+      # we're centered
       search_indices.push :right
       search_indices.push :left
     end
@@ -177,8 +175,6 @@ def mark_basins(map,marker=1)
         if new_map[row_idx][col_idx + 1] == :B
           queue.push([row_idx,col_idx+1])
         end
-      else
-        raise "wat"
       end
     end
   end
