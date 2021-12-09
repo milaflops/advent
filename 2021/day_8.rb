@@ -64,9 +64,24 @@ class OutputLine
 
   def print_info
     puts "#{@raw_input} | #{@raw_output}"
-    puts @map.inspect
-    puts translate_output.inspect
-    puts @poss_map.inspect
+    # puts @map.inspect
+    # puts translate_output.inspect
+    numbers = translate_output
+    digits.each.with_index do |seq,index|
+      puts "#{seq.chars.sort.join}\t=>\t#{numbers[index].inspect}"
+    end
+    # puts @poss_map.inspect
+    puts @seq_map.inspect
+  end
+
+  def digits
+    @input_digits + @output_digits
+  end
+
+  def output_value
+    @output_digits.map do |digit|
+      @seq_map[digit.chars.sort].to_s
+    end.join.to_i
   end
 
   def each_digit
@@ -109,102 +124,6 @@ class OutputLine
     end
     false
   end
-
-  # def build_map!
-  #   puts " ---- building map"
-  #   while possibilities_left?
-  #     # doing multiple passes!
-  #     # let's get the known ones squared away
-  #     each_digit do |seq|
-  #       if UNIQUE_LENGTHS.include?(seq.length)
-  #         # set map when we are sure of a digit
-  #         @map[UNIQUE_LENGTH_MAP[seq.length]] = seq.chars
-  #       end
-  #       if seq.length == 2
-  #         # this is 1 for sure
-  #         # intentionally re-calling chars for free duplication
-  #         @poss_map["c"] = intersection(@poss_map["c"], seq.chars)
-  #         @poss_map["f"] = intersection(@poss_map["f"], seq.chars)
-  #       elsif seq.length == 4
-  #         @poss_map["b"] = intersection(@poss_map["b"], seq.chars)
-  #         @poss_map["c"] = intersection(@poss_map["c"], seq.chars)
-  #         @poss_map["d"] = intersection(@poss_map["d"], seq.chars)
-  #         @poss_map["f"] = intersection(@poss_map["f"], seq.chars)
-  #       elsif seq.length == 3
-  #         @poss_map["a"] = intersection(@poss_map["a"], seq.chars)
-  #         @poss_map["c"] = intersection(@poss_map["c"], seq.chars)
-  #         @poss_map["f"] = intersection(@poss_map["f"], seq.chars)
-  #       elsif seq.length == 6
-  #         missing_segment = (REF - seq.chars).first
-  #         if !@map[4].empty?
-  #           if @map[4].include?(missing_segment)
-  #             # if the missing segment is in "4", then the sequence is 0 or 6
-  #             # if !@map[1].empty? 
-  #             #   # let's only proceed if we've got possibilities calculated for 1 yet
-  #             #   if @map[1].include?(missing_segment)
-  #             #     # if the missing segment is in "1", then it's 6
-  #             #     @poss_map["c"] = intersection(@poss_map["c"], seq.chars)
-  #             #     @map[6] = seq.chars.sort
-  #             #   else
-  #             #     # if the missing segment is not in "1", then it's 0
-  #             #     @poss_map["d"] = intersection(@poss_map["d"], seq.chars)
-  #             #     @map[0] = seq.chars.sort
-  #             #   end
-  #             # end
-  #           else
-  #             # if the missing segment is not in "4", then the sequence is 9
-  #             @poss_map["e"] = intersection(@poss_map["e"], [missing_segment])
-  #             @map[9] = seq.chars.sort
-  #             # and we know what the bottom segment is, because it's whatever's not in 1, 4, or 7
-  #             if !@map[1].empty? && !@map[4].empty? && !@map[7].empty?
-  #               @poss_map["g"] = intersection(@poss_map["g"], (REF - @map[4] - @map[7] - [missing_segment]))
-  #             end
-  #           end
-  #         end
-  #       elsif seq.length == 5
-  #         # there are two missing segments! so it's either 2, 3, or 5
-  #         missing_digits = REF - seq.chars
-  #         if @map[4]
-  #           common_with_4 = intersection(missing_digits, @map[4])
-  #           if common_with_4.length == 2
-  #             # if both are in 4, then it's 2
-  #             @poss_map["b"] = intersection(@poss_map["b"], missing_digits)
-  #             @poss_map["f"] = intersection(@poss_map["f"], missing_digits)
-  #             @map[2] = seq.chars.sort
-  #           end
-  #         end
-  #         # if @map[1]
-  #         #   common_with_1 = intersection(missing_digits, @map[1])
-  #         #   if common_with_1 ==
-  #       else
-  #         "nice"
-  #       end
-  #     end
-  #     # figure out "a"
-  #     if @map[1] && @map[7]
-  #       @poss_map["a"] = @map[7] - @map[1]
-  #     end
-  #     # reduce "b" and "d"
-  #     if @map[1] && @map[4]
-  #       @poss_map["b"] = intersection(@poss_map["b"], (@map[4] - @map[1]))
-  #       @poss_map["d"] = intersection(@poss_map["d"], (@map[4] - @map[1]))
-  #     end
-  #     # cull possibilities already determined from other possibilities
-  #     confidences = []
-  #     @poss_map.each do |ref,poss|
-  #       if poss.length == 1
-  #         puts "we are confident that #{ref} is #{poss.first}"
-  #         confidences.push(poss.first)
-  #       end
-  #     end
-  #     @poss_map = @poss_map.to_a.map do |ref,poss|
-  #       if poss.length > 1
-  #         [ref, poss - confidences]
-  #       else
-  #         [ref, poss]
-  #       end
-  #     end.to_h
-  #   end
 
   def build_map!
     puts " ---- building map"
@@ -250,13 +169,17 @@ class OutputLine
           if common_with_4.length == 4
             # it's 9
             @seq_map[seq] = 9
-          elsif common_with_4 == 3
+            @map[9] = seq
+          elsif common_with_4.length == 3
             # it's 0
             @seq_map[seq] = 0
+            @map[0] = seq
           else
-            # it's 6
-            @seq_map[seq] = 6
+            raise "shit"
           end
+        elsif common_with_1.length == 1
+          @seq_map[seq] = 6
+          @map[6] = seq
         end
       elsif seq.length == 5
         # it's either 2, 3, 5, or 6
@@ -268,24 +191,23 @@ class OutputLine
         # this digit has 2 in common with 1
         # this digit has 2 in common with 7
         # this digit has 3 in common with 4
-        if common_with_1.length == 1
-          if common_with_4.length == 2
-            # it's 2
-            @seq_map[seq] == 2
-          end
-        elsif common_with_1.length == 2
-          # it's 3
-          @seq_map[seq] == 3
-        end
         # 5
         # this digit has 1 in common with 1
         # this digit has 2 in common with 7
         # this digit has 3 in common with 4
-        # 6
-        # this digit has 1 in common with 1
-        # this digit has 2 in common with 7
-        # this digit has 3 in common with 4
-        # 5 and 6 will be indeterminable until we know the others, so we'll wait for a final pass
+        if common_with_1.length == 1
+          # its 2 or 5
+          if common_with_4.length == 2
+            # it's 2
+            @seq_map[seq] = 2
+          elsif common_with_4.length == 3
+            # it's 5
+            @seq_map[seq] = 5
+          end
+        elsif common_with_1.length == 2
+          # it's 3
+          @seq_map[seq] = 3
+        end
       end
     end
     puts @seq_map.inspect
@@ -371,4 +293,14 @@ puts "answer to part 1: #{all_uniques}"
 
 # focusing on one line at a time.
 
-readouts.first.print_info
+# readouts.first.print_info
+
+readouts.each do |output_line|
+  puts output_line.output_value
+end
+
+final_sum_of_outputs = readouts.map do |output_line|
+  output_line.output_value
+end.inject(:+)
+
+puts "answer to part 2: #{final_sum_of_outputs}"
