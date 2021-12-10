@@ -76,11 +76,10 @@ class Chunk
       #   @incomplete = true
       #   @stack = stack
       # end
-      if @corrupted
-      else
-        @incomplete = true
-        @stack = stack
-      end
+    end
+    unless @corrupted
+      @incomplete = true
+      @stack = stack
     end
   end
 
@@ -96,7 +95,6 @@ class Chunk
   end
 
   def incomplete?
-    return false if @corrupted
     !!@incomplete
   end
 
@@ -111,17 +109,13 @@ class Chunk
   end
 
   def points
-    if @illegal_char
+    if corrupted?
       POINTS[@illegal_char]
-    elsif @incomplete
+    elsif incomplete?
       points_sum = 0
-      # puts completion_string
       completion_string.chars.each do |char|
-        # puts "start points_sum: #{points_sum}"
         points_sum *= 5
-        # puts "  * 5 points_sum: #{points_sum}"
         points_sum += IPOINTS[char]
-        # puts " + .. points_sum: #{points_sum}"
       end
       return points_sum
     else
@@ -131,13 +125,6 @@ class Chunk
 end
 
 input = File.read("./inputs/day_10.txt")
-# input = <<~NICE
-# [({(<(())[]>[[{[]{<()<>>
-# [(()[<>])]({[<{<<[]>>(
-# (((({<>}<{<{<>}{[]{[]{}
-# {<[[]]>}<{[{[{[]{()[[[]
-# <{([{{}}[<[[[<>{}]]]>[]]
-# NICE
 chunks = input.split("\n").map do |line|
   Chunk.new(line)
 end
@@ -160,31 +147,6 @@ end.map do |chunk|
   chunk.points
 end.sort
 
-puts "    ----"
-puts incomplete_points
-puts "    ----"
-
-puts "incomplete_points length is #{incomplete_points.length}"
-
-[
- -2,
- -1,
- 0,
- 1,
- 2
-].each do |nudge|
-  calculated_middle = incomplete_points.length.to_i / 2
-  middle = calculated_middle + nudge
-
-  middle_score = incomplete_points[middle]
-
-  puts "at idx #{middle}: #{middle_score}"
-end
-
-puts "middle score - 1:", incomplete_points[(incomplete_points.length.to_i / 2) - 1]
-puts "middle score:", middle_score = incomplete_points[incomplete_points.length.to_i / 2]
-puts "middle score + 1", incomplete_points[(incomplete_points.length.to_i / 2) + 1]
-
-# puts incomplete_points
+middle_score = incomplete_points[incomplete_points.length.to_i / 2]
 
 puts "answer to part 2, middle score of incomplete lines: #{middle_score}"
