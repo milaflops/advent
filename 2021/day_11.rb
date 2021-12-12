@@ -1,87 +1,14 @@
 #!/usr/bin/env ruby
 
 require 'colorize'
-
-example = <<~SQUID
-5483143223
-2745854711
-5264556173
-6141336146
-6357385478
-4167524645
-2176841721
-6882881134
-4846848554
-5283751526
-SQUID
-
 require 'byebug'
 
-input = File.read("./inputs/day_10.txt")
-# octopi = input.split("\n").map do |line|
-#     line.chars.each do |energy_level|
-
-#     end
-# end
-
-# class Octopus
-#     attr_reader :energy_level, :adjacents
-
-#     def initialize(energy_level)
-#         @energy_level = energy_level.to_i
-#     end
-
-#     def push_adjacents(adjacents)
-#         @adjacents ||= []
-#         adjacents.each do |adjacent|
-#             unless adjacent.nil?
-#                 @adjacents.push adjacent
-#             end
-#         end
-#         # puts @adjacents.length
-#     end
-# end
-
-# example_octopi = example.lines.map do |line|
-#     line.strip.chars.map do |energy_level|
-#         Octopus.new(energy_level)
-#     end
-# end
-
-# example_octopi.each.with_index do |row,row_idx|
-#     row.each.with_index do |octopus,col_idx|
-#         unless row_idx == 0
-#             octopus.push_adjacents([
-#                 example_octopi[row_idx-1][col_idx-1],
-#                 example_octopi[row_idx-1][col_idx],
-#                 example_octopi[row_idx-1][col_idx+1]
-#             ])
-#         end
-#         octopus.push_adjacents([
-#             example_octopi[row_idx][col_idx-1],
-#             example_octopi[row_idx][col_idx+1]
-#         ])
-#         unless row_idx == example_octopi.length - 1
-#             octopus.push_adjacents([
-#                 example_octopi[row_idx+1][col_idx-1],
-#                 example_octopi[row_idx+1][col_idx],
-#                 example_octopi[row_idx+1][col_idx+1]
-#             ])
-#         end
-#     end
-# end
-
-# def print_octopi(octopi)
-#     octopi.each do |row|
-#         row.each do |octopus|
-#             print octopus.adjacents.length
-#             byebug
-#         end
-#         puts
-#     end
-# end
-
-# print_octopi(example_octopi)
+input = File.read("./inputs/day_11.txt")
+octopi = input.split("\n").map do |line|
+    line.strip.chars.map do |energy_level|
+        energy_level.to_i
+    end
+end
 
 example = <<~SQUID
 5483143223
@@ -113,6 +40,16 @@ def flashes_left?(octopi)
         end
     end
     false
+end
+
+def count_flashed(octopi)
+    sum = 0
+    octopi.each do |row|
+        row.each do |octopi|
+            sum += 1 if octopi == 0
+        end
+    end
+    sum
 end
 
 def step_once(octopi)
@@ -166,10 +103,13 @@ end
 
 def step_n_times(n,octopi)
     new_octopi = octopi
+    flashes = 0
     n.times do |i|
         new_octopi = step_once(new_octopi)
+        flashes += count_flashed(new_octopi)
         puts " ---- after #{i+1} times:"
         print_map(new_octopi)
+        puts "    (#{flashes} flashes so far)"
     end
     new_octopi
 end
@@ -191,4 +131,23 @@ end
 # puts '---'
 # print_map(step_once(step_once(example_octopi)))
 
-step_n_times(8,example_octopi)
+step_n_times(100,octopi)
+
+def count_until_all_flash(octopi)
+    number_of_octopi = octopi.length * octopi.first.length
+    new_octopi = octopi
+    step = 0
+    while true
+        step += 1
+        new_octopi = step_once(new_octopi)
+        flashes = count_flashed(new_octopi)
+        percent = ((flashes.to_f / number_of_octopi) * 100).round
+        puts " ---- on step #{step}, #{percent} flashed"
+        if flashes == number_of_octopi
+           puts "done! they all flashed on step #{step}"
+           break
+        end
+    end
+end
+
+count_until_all_flash(octopi)
