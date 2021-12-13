@@ -122,41 +122,17 @@ end
 def caves_to_paths(caves)
     paths = []
     queue = [["start"]]
+    i = 0
+    traversed_paths = Set.new
     while !queue.empty?
+        break if i > 50
         next_path = queue.shift
+        puts "currently analyzing path: #{next_path.inspect}"
         visited = Set.new
-        traversed_paths = Set.new
-        puts next_path.inspect
-        # break if next_path.length > 10
         possibilities = caves[next_path.last].to_a
         possibilities.each do |possibility|
-            # puts "#{queue}"
-            # # for each branch we can go, there are several options
-            # # puts "we're going from #{next_path} to #{possibility}"
-            # if possibility == "end"
-            #     # we're done!
-            #     paths.push (next_path + [possibility]).join("-")
-            # elsif possibility == "start"
-            #     # do nothing
-            # elsif visited.include?(possibility)
-            #     # we've been here before
-            # elsif traversed_paths.include?("#{next_path.last},#{possibility}")
-            #     # we've traveled this way before, let's not get into any cycles
-            # elsif possibility == possibility.downcase
-            #     # small cave
-            #     unless visited.include?(possibility)
-            #         visited.add possibility
-            #         queue.push(next_path + [possibility])
-            #     end
-            #     traversed_paths.add("#{next_path.last}-#{possibility}")
-            # else
-            #     # puts "else case: #{possibility}"
-            #     # large cave
-            #     queue.push(next_path + [possibility])
-            #     traversed_paths.add("#{next_path.last}-#{possibility}")
-            # end
             if possibility == "end"
-                paths.push(next_path + [possibility]).join(",")
+                paths.push((next_path + [possibility]).join(","))
             elsif possibility == "start"
                 # do nothing
             elsif visited.include?(possibility)
@@ -164,27 +140,20 @@ def caves_to_paths(caves)
             elsif traversed_paths.include?("#{next_path.last}-#{possibility}")
                 # do nothing
             else
-                puts "our possibility is #{possibility}"
+                # puts "our possibility is #{possibility}"
                 if possibility == possibility.downcase
                     visited.add(possibility)
                 end
                 queue.push(next_path + [possibility])
                 traversed_paths.add("#{next_path.last}-#{possibility}")
             end
-            visited.add(possibility.downcase)
+            # visited.add(possibility.downcase)
         end
-        puts queue.inspect
-    # cave_lookup["start"].each do |next_path|
-        # if next_path == "end"
-        #     paths.add "start-end"
-        # else
-        #     if next_path == next_path.downcase
-        #         queue.add(["start", next_path])
-        #         visited.add next_path
-        #     end
-        # end
+        i += 1
     end
     paths
 end
 
-puts str_to_caves(example1)
+hash = str_to_caves(example1)
+
+puts caves_to_paths(hash)
