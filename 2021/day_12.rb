@@ -124,6 +124,7 @@ def caves_to_paths(caves)
     paths
 end
 
+puts "######## PART 1 ########"
 [
     ["example 1", example1, 10],
     ["example 2", example2, 19],
@@ -132,6 +133,69 @@ end
 ].each do |name,cavestring,expected_paths|
     hash = str_to_caves(cavestring)
     paths = caves_to_paths(hash)
+
+    puts " ---- #{name}"
+    puts "   -- expecting #{expected_paths} paths"
+    puts "   -- got #{paths.length} paths"
+end
+
+def modified_pathfinder(caves)
+    paths = []
+    queue = [["start"]]
+    small_caves = caves.keys.reject do |cave|
+        (cave == "start") || 
+        (cave == "end") ||
+        (cave == cave.upcase)
+    end
+    puts small_caves
+    while !queue.empty?
+        next_path = queue.shift
+        small_caves.each do |small_cave|
+            # try making each small cave twice visitable
+            # but, one ping only please
+            puts " ---- currently analyzing path: #{next_path.inspect}" if DEBUG
+            visited = {}
+            next_path.each do |stop|
+                if stop == "start"
+                elsif stop == stop.upcase
+                else
+                    visited[stop] ||= 0
+                    visited[stop] = 1
+                end
+            end
+            possibilities = caves[next_path.last].to_a
+            puts "  --- these are our possibilities: #{possibilities}" if DEBUG
+            possibilities.each do |possibility|
+                puts "   -- #{possibility}" if DEBUG
+                if possibility == "end"
+                    paths.push((next_path + [possibility]).join(","))
+                    puts "finished path: #{paths.last}" if DEBUG
+                elsif possibility == "start"
+                    puts "not going back to start" if DEBUG
+                elsif visited[possibility]
+                    puts "already visited #{possibility}" if DEBUG
+                else
+                    if possibility == possibility.downcase
+                        visited.add(possibility)
+                    end
+                    queue.push(next_path + [possibility])
+                    puts "pushed this one into queue" if DEBUG
+                end
+            end
+        end
+    end
+    paths
+end
+
+puts "######## PART 2 ########"
+[
+    ["example 1", example1, 36],
+    ["example 2", example2, 103],
+    ["example 3", example3, 3509],
+    ["input", input, nil]
+].each do |name,cavestring,expected_paths|
+    hash = str_to_caves(cavestring)
+    paths = modified_pathfinder(hash)
 
     puts " ---- #{name}"
     puts "   -- expecting #{expected_paths} paths"
