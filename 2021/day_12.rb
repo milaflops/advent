@@ -123,29 +123,47 @@ def caves_to_paths(caves)
     paths = []
     queue = [["start"]]
     i = 0
-    traversed_paths = Set.new
     while !queue.empty?
-        break if i > 50
+        # break if i > 50
         next_path = queue.shift
-        puts "currently analyzing path: #{next_path.inspect}"
+        puts " ---- currently analyzing path: #{next_path.inspect}"
+        # record all traversed
+        # traversed_paths = Set.new
         visited = Set.new
+        next_path.each do |stop|
+            if stop == "start"
+            elsif stop == stop.upcase
+            else
+                visited.add(stop)
+            end
+
+            # next if index == 0
+            # traversed_paths.add("#{next_path[index-1]}-#{next_path}")
+        end
         possibilities = caves[next_path.last].to_a
+        puts "  --- these are our possibilities: #{possibilities}"
         possibilities.each do |possibility|
+            puts "   -- #{possibility}"
             if possibility == "end"
                 paths.push((next_path + [possibility]).join(","))
+                puts "finished path: #{paths.last}"
             elsif possibility == "start"
+                puts "not going back to start"
                 # do nothing
             elsif visited.include?(possibility)
+                puts "already visited #{possibility}"
                 # do nothing
-            elsif traversed_paths.include?("#{next_path.last}-#{possibility}")
-                # do nothing
+            # elsif traversed_paths.include?("#{next_path.last}-#{possibility}")
+            #     puts "already traversed #{next_path.last}-#{possibility}"
+            #     # do nothing
             else
                 # puts "our possibility is #{possibility}"
                 if possibility == possibility.downcase
                     visited.add(possibility)
                 end
                 queue.push(next_path + [possibility])
-                traversed_paths.add("#{next_path.last}-#{possibility}")
+                puts "pushed this one into queue"
+                # traversed_paths.add("#{next_path.last}-#{possibility}")
             end
             # visited.add(possibility.downcase)
         end
